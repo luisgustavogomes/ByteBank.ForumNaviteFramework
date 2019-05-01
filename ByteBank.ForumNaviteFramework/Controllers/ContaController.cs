@@ -48,7 +48,7 @@ namespace ByteBank.ForumNaviteFramework.Controllers
                     NomeCompleto = model.NomeCompleto
                 };
 
-                var usuario = UserManager.FindByEmail(model.Email);
+                var usuario = await UserManager.FindByEmailAsync(model.Email);
                 var usuarioJaExiste = usuario != null;
 
                 if (usuarioJaExiste)

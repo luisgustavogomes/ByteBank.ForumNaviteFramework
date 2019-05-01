@@ -43,8 +43,9 @@ namespace ByteBank.ForumNaviteFramework
                         ObrigatorioDigitos = true,
                         ObrigatorioLowerCase = true,
                         ObrigatorioUpperCase = true
-
                     };
+
+                    userManager.EmailService = new EmailServico();
 
                     return userManager;
                 });
