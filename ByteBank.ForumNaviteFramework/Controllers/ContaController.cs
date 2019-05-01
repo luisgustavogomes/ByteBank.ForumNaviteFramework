@@ -1,7 +1,6 @@
 ﻿using ByteBank.ForumNaviteFramework.Models;
 using ByteBank.ForumNaviteFramework.Models.ViewModels;
 using Microsoft.AspNet.Identity;
-using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.AspNet.Identity.Owin;
 using System;
 using System.Threading.Tasks;
@@ -52,16 +51,45 @@ namespace ByteBank.ForumNaviteFramework.Controllers
                 var usuarioJaExiste = usuario != null;
 
                 if (usuarioJaExiste)
-                    return RedirectToAction("Index", "Home");
-                
+                    return View("AguardandoConfirmacao");
+
                 var resultado = await UserManager.CreateAsync(novoUsuario, model.Senha);
 
-                if (resultado.Succeeded) 
-                    return RedirectToAction("Index", "Home");
+                if (resultado.Succeeded)
+                {
+                    await EnviaEmailDeConfirmacaoAsync(novoUsuario);
+                    return View("AguardandoConfirmacao");
+                }
                 else
+                {
                     AdicicionaErros(resultado);
+                }
             }
             return View(model);
+        }
+
+        public async Task<ActionResult> ConfirmacaoEmail(string usuarioId, string token)
+        {
+            if (string.IsNullOrEmpty(usuarioId) || string.IsNullOrEmpty(token))
+                return RedirectToAction("Erro");
+
+            var resultado = await UserManager.ConfirmEmailAsync(usuarioId, token);
+
+            if (resultado.Succeeded)
+                return RedirectToAction("Index", "Home");
+            else
+                return View("Error");
+            
+        }
+
+
+        private async Task EnviaEmailDeConfirmacaoAsync(UsuarioAplicacao usuario)
+        {
+            var token = await UserManager.GenerateEmailConfirmationTokenAsync(usuario.Id);
+            var linkDeCallback = Url.Action("ConfirmacaoEmail", "Conta", new { usuarioId = usuario.Id, token = token }, Request.Url.Scheme);
+            await UserManager.SendEmailAsync(usuario.Id,
+                "Fórum Bytebank -Confirmação de E-mail",
+                $"Bem vindo ao fórum do Bytebank, clique aqui {linkDeCallback} para confirmar seu e-mail!");
         }
 
         /// <summary>
