@@ -3,6 +3,7 @@ using ByteBank.ForumNaviteFramework.Models.ViewModels;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.AspNet.Identity.Owin;
+using System;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
@@ -18,9 +19,7 @@ namespace ByteBank.ForumNaviteFramework.Controllers
             get
             {
                 if (_userManager == null)
-                {
                     _userManager = HttpContext.GetOwinContext().GetUserManager<UserManager<UsuarioAplicacao>>();
-                }
                 return _userManager;
             }
             set
@@ -41,7 +40,7 @@ namespace ByteBank.ForumNaviteFramework.Controllers
         {
             if (ModelState.IsValid)
             {
-                
+
                 var novoUsuario = new UsuarioAplicacao
                 {
                     Email = model.Email,
@@ -49,13 +48,30 @@ namespace ByteBank.ForumNaviteFramework.Controllers
                     NomeCompleto = model.NomeCompleto
                 };
 
-                await UserManager.CreateAsync(novoUsuario, model.Senha);
+                var usuario = UserManager.FindByEmail(model.Email);
+                var usuarioJaExiste = usuario != null;
 
-                return RedirectToAction("Index", "Home");
+                if (usuarioJaExiste)
+                    return RedirectToAction("Index", "Home");
+                
+                var resultado = await UserManager.CreateAsync(novoUsuario, model.Senha);
+
+                if (resultado.Succeeded) 
+                    return RedirectToAction("Index", "Home");
+                else
+                    AdicicionaErros(resultado);
             }
             return View(model);
         }
 
-
+        /// <summary>
+        /// Método que verifica se o usuário já está criado
+        /// </summary>
+        /// <param name="resultado"></param>
+        private void AdicicionaErros(IdentityResult resultado)
+        {
+            foreach (var item in resultado.Errors)
+                ModelState.AddModelError("", item);
+        }
     }
 }

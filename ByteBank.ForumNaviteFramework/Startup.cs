@@ -1,4 +1,5 @@
-﻿using ByteBank.ForumNaviteFramework.Models;
+﻿using ByteBank.ForumNaviteFramework.App_Start.Identity;
+using ByteBank.ForumNaviteFramework.Models;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.AspNet.Identity.Owin;
@@ -26,7 +27,26 @@ namespace ByteBank.ForumNaviteFramework
                 (opcoes, contextoOwin) =>
                 {
                     var userStore = contextoOwin.Get<IUserStore<UsuarioAplicacao>>();
-                    return new UserManager<UsuarioAplicacao>(userStore);
+                    var userManager = new UserManager<UsuarioAplicacao>(userStore);
+
+                    var userValidator = new UserValidator<UsuarioAplicacao>(userManager)
+                    {
+                        RequireUniqueEmail = true
+                    };
+
+                    userManager.UserValidator = userValidator;
+
+                    userManager.PasswordValidator = new SenhaValidador()
+                    {
+                        TamanhoRequerido = 6,
+                        ObrigatorioCaracteresEspeciais = true,
+                        ObrigatorioDigitos = true,
+                        ObrigatorioLowerCase = true,
+                        ObrigatorioUpperCase = true
+
+                    };
+
+                    return userManager;
                 });
         }
     }
