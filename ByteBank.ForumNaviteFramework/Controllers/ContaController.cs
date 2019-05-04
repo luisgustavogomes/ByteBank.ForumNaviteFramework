@@ -2,7 +2,7 @@
 using ByteBank.ForumNaviteFramework.Models.ViewModels;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
-using System;
+using Microsoft.Owin.Security;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
@@ -24,6 +24,30 @@ namespace ByteBank.ForumNaviteFramework.Controllers
             set
             {
                 _userManager = value;
+            }
+        }
+
+        private SignInManager<UsuarioAplicacao, string> _signInManager;
+        public SignInManager<UsuarioAplicacao, string> SignInManager
+        {
+            get
+            {
+                if (_signInManager == null)
+                    _signInManager = HttpContext.GetOwinContext().GetUserManager<SignInManager<UsuarioAplicacao, string>>();
+                return _signInManager;
+            }
+            set
+            {
+                _signInManager = value;
+            }
+        }
+
+        public IAuthenticationManager AuthenticationManager
+        {
+            get
+            {
+                var contextoOwin = Request.GetOwinContext();
+                return contextoOwin.Authentication;
             }
         }
 
@@ -92,10 +116,6 @@ namespace ByteBank.ForumNaviteFramework.Controllers
                 $"Bem vindo ao fórum do Bytebank, clique aqui {linkDeCallback} para confirmar seu e-mail!");
         }
 
-        /// <summary>
-        /// Método que verifica se o usuário já está criado
-        /// </summary>
-        /// <param name="resultado"></param>
         private void AdicicionaErros(IdentityResult resultado)
         {
             foreach (var item in resultado.Errors)
@@ -113,9 +133,40 @@ namespace ByteBank.ForumNaviteFramework.Controllers
         {
             if (ModelState.IsValid)
             {
+                var usuario = await UserManager.FindByEmailAsync(model.Email);
 
+
+                if (usuario == null)
+                    return SenhaOuUsuarioInvalidos();
+
+                var signInResultado = await SignInManager.PasswordSignInAsync(
+                                                usuario.UserName,
+                                                model.Senha,
+                                                isPersistent: model.ContinuarLogado,
+                                                shouldLockout: false);
+                switch (signInResultado)
+                {
+                    case SignInStatus.Success:
+                        return RedirectToAction("Index", "Home");
+
+                    default:
+                        return SenhaOuUsuarioInvalidos();
+                }
             }
             return View(model);
+        }
+
+        private ActionResult SenhaOuUsuarioInvalidos()
+        {
+            ModelState.AddModelError("", "Credenciais inválidas");
+            return View("Login");
+        }
+
+        [HttpPost]
+        public ActionResult Logoff()
+        {
+            AuthenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
+            return RedirectToAction("Index", "home");
         }
 
     }
