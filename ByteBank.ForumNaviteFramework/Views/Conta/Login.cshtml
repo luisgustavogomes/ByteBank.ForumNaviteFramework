@@ -1,0 +1,23 @@
+﻿@model ByteBank.ForumNaviteFramework.Models.ViewModels.ContaLoginViewModel
+
+@{
+    ViewBag.Title = "Login";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Login</h2>
+
+
+@using (Html.BeginForm())
+{
+
+    <div class="form-group">
+        @Html.ValidationSummary("", new { @class = "text-danger" })
+
+        @Html.EditorForModel()
+
+        <br />
+        <hr />
+        <input type="submit" value="Login" class="btn btn-primary btn-block" />
+    </div>
+}

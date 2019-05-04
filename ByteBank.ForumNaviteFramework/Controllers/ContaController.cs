@@ -79,7 +79,7 @@ namespace ByteBank.ForumNaviteFramework.Controllers
                 return RedirectToAction("Index", "Home");
             else
                 return View("Error");
-            
+
         }
 
 
@@ -101,5 +101,22 @@ namespace ByteBank.ForumNaviteFramework.Controllers
             foreach (var item in resultado.Errors)
                 ModelState.AddModelError("", item);
         }
+
+
+        public async Task<ActionResult> Login()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> Login(ContaLoginViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+
+            }
+            return View(model);
+        }
+
     }
 }
