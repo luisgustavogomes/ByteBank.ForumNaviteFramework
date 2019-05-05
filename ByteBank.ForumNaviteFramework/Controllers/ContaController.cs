@@ -84,9 +84,7 @@ namespace ByteBank.ForumNaviteFramework.Controllers
                     return View("AguardandoConfirmacao");
                 }
                 else
-                {
                     AdicicionaErros(resultado);
-                }
             }
             return View(model);
         }
@@ -110,7 +108,7 @@ namespace ByteBank.ForumNaviteFramework.Controllers
             var token = await UserManager.GenerateEmailConfirmationTokenAsync(usuario.Id);
             var linkDeCallback = Url.Action("ConfirmacaoEmail", "Conta", new { usuarioId = usuario.Id, token = token }, Request.Url.Scheme);
             await UserManager.SendEmailAsync(usuario.Id,
-                "Fórum Bytebank -Confirmação de E-mail",
+                "Fórum Bytebank - Confirmação de E-mail",
                 $"Bem vindo ao fórum do Bytebank, clique aqui {linkDeCallback} para confirmar seu e-mail!");
         }
 
@@ -145,6 +143,11 @@ namespace ByteBank.ForumNaviteFramework.Controllers
                 switch (signInResultado)
                 {
                     case SignInStatus.Success:
+                        if (!usuario.EmailConfirmed)
+                        {
+                            AuthenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
+                            return View("AguardandoConfirmacao");
+                        }
                         return RedirectToAction("Index", "Home");
                     case SignInStatus.LockedOut:
                         var senhaCorreta = await UserManager.CheckPasswordAsync(usuario, model.Senha);
@@ -153,7 +156,7 @@ namespace ByteBank.ForumNaviteFramework.Controllers
                             var tempo = await UserManager.GetLockoutEndDateAsync(usuario.Id);
                             ModelState.AddModelError("", $"A Conta está bloqueada! {HelpDate.GetDateTimeZoneBr(tempo.UtcDateTime)}");
                         }
-                        else 
+                        else
                             return SenhaOuUsuarioInvalidos();
                         break;
                     default:
@@ -174,6 +177,61 @@ namespace ByteBank.ForumNaviteFramework.Controllers
         {
             AuthenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
             return RedirectToAction("Index", "home");
+        }
+
+
+        public ActionResult EsqueciSenha()
+        {
+            return View();
+        }
+
+
+        [HttpPost]
+        public async Task<ActionResult> EsqueciSenha(ContaEsqueciSenhaViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var usuario = await UserManager.FindByEmailAsync(model.Email);
+
+                if (usuario != null)
+                {
+                    var token = await UserManager.GeneratePasswordResetTokenAsync(usuario.Id);
+                    var linkDeCallback = Url.Action("ConfirmacaoAlteracaoSenha",
+                        "Conta",
+                        new { usuarioId = usuario.Id, token = token }, Request.Url.Scheme);
+                    await UserManager.SendEmailAsync(usuario.Id,
+                        "Fórum Bytebank - Alteração de senha",
+                        $"Clique aqui {linkDeCallback} para alterar sua senha!");
+                }
+                return View("EmailAlteracaoSenhaEnviado");
+            }
+            return View();
+        }
+
+        public ActionResult ConfirmacaoAlteracaoSenha(string usuario, string token)
+        {
+            var model = new ContaConfirmacaoAlteracaoSenhaViewModel
+            {
+                UsuarioId = usuario,
+                Token = token
+            };
+            return View(model);
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> ConfirmacaoAlteracaoSenha(ContaConfirmacaoAlteracaoSenhaViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var resultadoAlteracaoSenha = await UserManager.ResetPasswordAsync(model.UsuarioId, 
+                    model.Token, model.NovaSenha);
+
+                if (resultadoAlteracaoSenha.Succeeded)
+                    return RedirectToAction("Index", "Home");
+
+                AdicicionaErros(resultadoAlteracaoSenha);
+            }
+            return View();
         }
 
     }

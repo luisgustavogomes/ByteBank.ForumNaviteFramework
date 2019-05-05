@@ -164,6 +164,8 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\UsuarioAplicacao.cs" />
+    <Compile Include="Models\ViewModels\ContaConfirmacaoAlteracaoSenhaViewModel.cs" />
+    <Compile Include="Models\ViewModels\ContaEsqueciSenhaViewModel.cs" />
     <Compile Include="Models\ViewModels\ContaLoginViewModel.cs" />
     <Compile Include="Models\ViewModels\ContaRegistrarViewModel.cs" />
     <Compile Include="Models\ViewModels\TopicoCriarViewModel.cs" />
@@ -211,6 +213,9 @@
     <Content Include="Views\Conta\AguardandoConfirmacao.cshtml" />
     <Content Include="Views\Topico\Criar.cshtml" />
     <Content Include="Views\Conta\Login.cshtml" />
+    <Content Include="Views\Conta\EsqueciSenha.cshtml" />
+    <Content Include="Views\Conta\EmailAlteracaoSenhaEnviado.cshtml" />
+    <Content Include="Views\Conta\ConfirmacaoAlteracaoSenha.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

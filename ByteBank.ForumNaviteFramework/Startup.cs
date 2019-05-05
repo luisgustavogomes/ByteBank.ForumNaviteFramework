@@ -57,6 +57,7 @@ namespace ByteBank.ForumNaviteFramework
                     userManager.DefaultAccountLockoutTimeSpan = TimeSpan.FromMinutes(2);
                     userManager.UserLockoutEnabledByDefault = true;
 
+                    
 
                     return userManager;
                 });
