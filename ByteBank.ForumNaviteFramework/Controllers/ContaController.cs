@@ -208,11 +208,11 @@ namespace ByteBank.ForumNaviteFramework.Controllers
             return View();
         }
 
-        public ActionResult ConfirmacaoAlteracaoSenha(string usuario, string token)
+        public ActionResult ConfirmacaoAlteracaoSenha(string usuarioId, string token)
         {
             var model = new ContaConfirmacaoAlteracaoSenhaViewModel
             {
-                UsuarioId = usuario,
+                UsuarioId = usuarioId,
                 Token = token
             };
             return View(model);
