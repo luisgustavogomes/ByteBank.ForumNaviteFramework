@@ -1,5 +1,6 @@
 ﻿using ByteBank.ForumNaviteFramework.Models;
 using ByteBank.ForumNaviteFramework.Models.ViewModels;
+using ByteBank.ForumNaviteFramework.Utils;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
@@ -51,12 +52,10 @@ namespace ByteBank.ForumNaviteFramework.Controllers
             }
         }
 
-
         public ActionResult Registrar()
         {
             return View();
         }
-
 
         [HttpPost]
         public async Task<ActionResult> Registrar(ContaRegistrarViewModel model)
@@ -106,7 +105,6 @@ namespace ByteBank.ForumNaviteFramework.Controllers
 
         }
 
-
         private async Task EnviaEmailDeConfirmacaoAsync(UsuarioAplicacao usuario)
         {
             var token = await UserManager.GenerateEmailConfirmationTokenAsync(usuario.Id);
@@ -143,12 +141,21 @@ namespace ByteBank.ForumNaviteFramework.Controllers
                                                 usuario.UserName,
                                                 model.Senha,
                                                 isPersistent: model.ContinuarLogado,
-                                                shouldLockout: false);
+                                                shouldLockout: true);
                 switch (signInResultado)
                 {
                     case SignInStatus.Success:
                         return RedirectToAction("Index", "Home");
-
+                    case SignInStatus.LockedOut:
+                        var senhaCorreta = await UserManager.CheckPasswordAsync(usuario, model.Senha);
+                        if (senhaCorreta)
+                        {
+                            var tempo = await UserManager.GetLockoutEndDateAsync(usuario.Id);
+                            ModelState.AddModelError("", $"A Conta está bloqueada! {HelpDate.GetDateTimeZoneBr(tempo.UtcDateTime)}");
+                        }
+                        else 
+                            return SenhaOuUsuarioInvalidos();
+                        break;
                     default:
                         return SenhaOuUsuarioInvalidos();
                 }
