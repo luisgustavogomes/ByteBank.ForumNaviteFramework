@@ -5,8 +5,10 @@ using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin;
 using Microsoft.Owin.Security.Cookies;
+using Microsoft.Owin.Security.Google;
 using Owin;
 using System;
+using System.Configuration;
 using System.Data.Entity;
 
 [assembly: OwinStartup(typeof(ByteBank.ForumNaviteFramework.Startup))]
@@ -70,7 +72,21 @@ namespace ByteBank.ForumNaviteFramework
                     return signInManager;
                 });
 
-            builder.UseCookieAuthentication(new CookieAuthenticationOptions { AuthenticationType = DefaultAuthenticationTypes.ApplicationCookie });
+            builder.UseCookieAuthentication(new CookieAuthenticationOptions
+            {
+                AuthenticationType = DefaultAuthenticationTypes.ApplicationCookie
+            });
+
+            builder.UseExternalSignInCookie(DefaultAuthenticationTypes.ExternalCookie);
+
+            builder.UseGoogleAuthentication(new GoogleOAuth2AuthenticationOptions
+            {
+                ClientId = ConfigurationManager.AppSettings["google:client_id"],
+                ClientSecret = ConfigurationManager.AppSettings["google:client_secret"],
+                Caption = "Google"
+            });
+
+
         }
     }
 }

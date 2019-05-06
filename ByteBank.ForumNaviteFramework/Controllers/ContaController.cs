@@ -89,6 +89,29 @@ namespace ByteBank.ForumNaviteFramework.Controllers
             return View(model);
         }
 
+
+        [HttpPost]
+        public ActionResult RegistrarPorAutenticacaoExterna(string provider)
+        {
+            SignInManager.AuthenticationManager.Challenge(
+                new AuthenticationProperties
+                {
+                    RedirectUri = Url.Action("RegistrarPorAutenticacaoExternaCallback")
+                }, 
+                provider);
+
+            return new HttpUnauthorizedResult();
+        }
+
+
+        public async Task<ActionResult> RegistrarPorAutenticacaoExternaCallback()
+        {
+            var loginInfo = await SignInManager.AuthenticationManager.GetExternalLoginInfoAsync();
+            return null;
+        }
+
+
+
         public async Task<ActionResult> ConfirmacaoEmail(string usuarioId, string token)
         {
             if (string.IsNullOrEmpty(usuarioId) || string.IsNullOrEmpty(token))
@@ -223,7 +246,7 @@ namespace ByteBank.ForumNaviteFramework.Controllers
         {
             if (ModelState.IsValid)
             {
-                var resultadoAlteracaoSenha = await UserManager.ResetPasswordAsync(model.UsuarioId, 
+                var resultadoAlteracaoSenha = await UserManager.ResetPasswordAsync(model.UsuarioId,
                     model.Token, model.NovaSenha);
 
                 if (resultadoAlteracaoSenha.Succeeded)
@@ -233,6 +256,9 @@ namespace ByteBank.ForumNaviteFramework.Controllers
             }
             return View();
         }
+
+
+
 
     }
 }

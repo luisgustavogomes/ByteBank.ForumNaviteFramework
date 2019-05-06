@@ -1,4 +1,5 @@
-﻿@model ByteBank.ForumNaviteFramework.Models.ViewModels.ContaRegistrarViewModel
+﻿@using Microsoft.Owin.Security
+@model ByteBank.ForumNaviteFramework.Models.ViewModels.ContaRegistrarViewModel
 
 @{
     ViewBag.Title = "Registrar";
@@ -19,11 +20,27 @@
 
         @Html.EditorForModel()
 
-        @*<div class="col-md-offset-2 col-md-10">*@
         <br />
-        <hr />
-            <input type="submit" name="Registrar" value="Registrar" class="btn btn-success" />
-        @*</div>*@
+        <input type="submit" name="Registrar" value="Registrar" class="btn btn-success" />
+        <br />
     </div>
+}
 
+
+@using (Html.BeginForm("RegistrarPorAutenticacaoExterna", "Conta"))
+{
+    var providersAutenticacao = Context.GetOwinContext().Authentication.GetExternalAuthenticationTypes();
+
+    if (providersAutenticacao != null && providersAutenticacao.Any())
+    {
+        <hr />
+        <div class="btn-group">
+            @foreach (var item in providersAutenticacao)
+            {
+                <button class="btn btn-primary" type="submit" value="@item.AuthenticationType" name="provider">
+                    @item.Caption
+                </button>
+            }
+        </div>
+    }
 }
