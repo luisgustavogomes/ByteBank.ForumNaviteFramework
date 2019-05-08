@@ -4,6 +4,7 @@ using ByteBank.ForumNaviteFramework.Utils;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
@@ -107,7 +108,28 @@ namespace ByteBank.ForumNaviteFramework.Controllers
         public async Task<ActionResult> RegistrarPorAutenticacaoExternaCallback()
         {
             var loginInfo = await SignInManager.AuthenticationManager.GetExternalLoginInfoAsync();
-            return null;
+
+            var usuarioExiste = await UserManager.FindByEmailAsync(loginInfo.Email);
+            if (usuarioExiste != null)
+                return View("Error");
+
+            var usuario = new UsuarioAplicacao
+            {
+                Email = loginInfo.Email,
+                UserName = loginInfo.Email,
+                NomeCompleto = loginInfo.ExternalIdentity.FindFirstValue(loginInfo.ExternalIdentity.NameClaimType)
+            };
+
+            var resultado = await UserManager.CreateAsync(usuario);
+
+            if (resultado.Succeeded)
+            {
+                var resultadoAddLoginInfo = await UserManager.AddLoginAsync(usuario.Id, loginInfo.Login);
+                if (resultadoAddLoginInfo.Succeeded)
+                    return RedirectToAction("Index", "Home");
+            }
+
+            return View("Error");
         }
 
 
@@ -187,6 +209,30 @@ namespace ByteBank.ForumNaviteFramework.Controllers
                 }
             }
             return View(model);
+        }
+
+
+        [HttpPost]
+        public ActionResult LoginPorAutenticacaoExterna(string provider)
+        {
+            SignInManager.AuthenticationManager.Challenge(
+                new AuthenticationProperties
+                {
+                    RedirectUri = Url.Action("LoginPorAutenticacaoExternaCallback")
+                },
+                provider);
+            return new HttpUnauthorizedResult();
+        }
+
+
+        public async Task<ActionResult> LoginPorAutenticacaoExternaCallback()
+        {
+            var loginInfo = await SignInManager.AuthenticationManager.GetExternalLoginInfoAsync();
+            var signInResultado = await SignInManager.ExternalSignInAsync(loginInfo, true);
+
+            if (signInResultado == SignInStatus.Success)
+                return RedirectToAction("Index", "Home");
+            return View("Error");
         }
 
         private ActionResult SenhaOuUsuarioInvalidos()

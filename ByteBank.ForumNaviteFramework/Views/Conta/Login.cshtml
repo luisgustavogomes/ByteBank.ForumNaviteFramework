@@ -1,4 +1,5 @@
 ﻿@model ByteBank.ForumNaviteFramework.Models.ViewModels.ContaLoginViewModel
+@using Microsoft.Owin.Security
 
 @{
     ViewBag.Title = "Login";
@@ -24,4 +25,24 @@
         <a class="modal-footer">@Html.ActionLink("Esqueci minha senha", "EsqueciSenha")</a>
 
     </div>
+}
+
+
+
+@using (Html.BeginForm("LoginPorAutenticacaoExterna", "Conta"))
+{
+    var providersAutenticacao = Context.GetOwinContext().Authentication.GetExternalAuthenticationTypes();
+
+    if (providersAutenticacao != null && providersAutenticacao.Any())
+    {
+        <hr />
+        <div class="btn-group">
+            @foreach (var item in providersAutenticacao)
+            {
+                <button class="btn btn-primary" type="submit" value="@item.AuthenticationType" name="provider">
+                    @item.Caption
+                </button>
+            }
+        </div>
+    }
 }
