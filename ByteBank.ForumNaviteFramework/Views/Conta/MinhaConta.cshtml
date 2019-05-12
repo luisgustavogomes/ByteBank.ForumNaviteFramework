@@ -1,0 +1,49 @@
+﻿@model ByteBank.ForumNaviteFramework.Models.ViewModels.ContaMinhaContaViewModel
+
+@{
+    ViewBag.Title = "MinhaConta";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Minha Conta</h2>
+
+@using (Html.BeginForm())
+{
+    <div class="form-group">
+        @Html.ValidationSummary("", new { @class = "text-danger" })
+
+        @Html.LabelFor(m => m.NomeCompleto)
+        <br />
+        @Html.EditorFor(m => m.NomeCompleto)
+        <br />
+
+        @Html.LabelFor(m => m.NumeroDeCelular)
+        <br />
+        @Html.EditorFor(m => m.NumeroDeCelular)
+        <br />
+
+        @if (Model.NumeroDeCelularConfirmado)
+        {
+            @Html.LabelFor(m => m.HabilitarAutenticacaoDeDoisFatores)
+            <br />
+            @Html.EditorFor(m => m.HabilitarAutenticacaoDeDoisFatores)
+            <br />
+        }
+        else
+        {
+            <p class="text-info">
+                * Informe e confirme seu número de celular para habilitar a autenticação com 2 fatores!
+            </p>
+
+            @Html.ActionLink("Clique aqui para verificar o token recebido", "VerificacaoCodigoCelular", "Conta")
+        }
+
+        <br />
+        <input type="submit" name="Salvar" value="Salvar" class="btn btn-success" />
+        <br />
+    </div>
+
+
+
+}
+

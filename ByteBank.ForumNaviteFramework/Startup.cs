@@ -66,6 +66,7 @@ namespace ByteBank.ForumNaviteFramework
                     };
 
                     userManager.EmailService = new EmailServico();
+                    userManager.SmsService = new SmsServico();
                     var dataProtectionProvider = opcoes.DataProtectionProvider;
                     var dataProtectionProviderCreated = opcoes.DataProtectionProvider.Create("ByteBank.ForumNaviteFramework");
 

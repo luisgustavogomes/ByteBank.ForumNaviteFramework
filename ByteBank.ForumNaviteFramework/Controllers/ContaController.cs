@@ -303,8 +303,67 @@ namespace ByteBank.ForumNaviteFramework.Controllers
             return View();
         }
 
+        public async Task<ActionResult> MinhaConta()
+        {
+            var usuarioId = HttpContext.User.Identity.GetUserId();
+            var usuario = await UserManager.FindByIdAsync(usuarioId);
+            var modelo = new ContaMinhaContaViewModel
+            {
+                NomeCompleto = usuario.NomeCompleto,
+                NumeroDeCelular = usuario.PhoneNumber,
+                HabilitarAutenticacaoDeDoisFatores = usuario.TwoFactorEnabled,
+                NumeroDeCelularConfirmado = usuario.PhoneNumberConfirmed
+            };
+
+            return View(modelo);
+        }
 
 
+        [HttpPost]
+        public async Task<ActionResult> MinhaConta(ContaMinhaContaViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var usuario = await UserManager.FindByIdAsync(HttpContext.User.Identity.GetUserId());
+                usuario.NomeCompleto = model.NomeCompleto;
+                usuario.PhoneNumber = model.NumeroDeCelular;
 
+                if (!usuario.PhoneNumberConfirmed)
+                    await EnviaSmsDeConfirmacaoAsync(usuario);
+
+                var resultadoUpdate = await UserManager.UpdateAsync(usuario);
+
+                if (resultadoUpdate.Succeeded)
+                    RedirectToAction("Index", "Home");
+                AdicicionaErros(resultadoUpdate);
+
+            }
+            return View();
+        }
+
+        private async Task EnviaSmsDeConfirmacaoAsync(UsuarioAplicacao usuario)
+        {
+            var token = await UserManager.GenerateChangePhoneNumberTokenAsync(usuario.Id, usuario.PhoneNumber);
+            await UserManager.SendSmsAsync(usuario.Id, $"Token de confirmação: {token}");
+        }
+
+        public ActionResult VerificacaoCodigoCelular()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> VerificacaoCodigoCelular(string token)
+        {
+            var usuario = await UserManager.FindByIdAsync(HttpContext.User.Identity.GetUserId());
+            var resultado = await UserManager.ChangePhoneNumberAsync(usuario.Id, usuario.PhoneNumber, token);
+
+            if (resultado.Succeeded)
+                return RedirectToAction("Index", "Home");
+
+            AdicicionaErros(resultado);
+            return View();
+        }
     }
+
 }

@@ -30,11 +30,15 @@
 
                     @if (Request.IsAuthenticated)
                     {
-                        using (Html.BeginForm("Logoff","Conta", FormMethod.Post, new { id = "Formulario_logoff" }))
+                        using (Html.BeginForm("Logoff", "Conta", FormMethod.Post, new { id = "Formulario_logoff" }))
                         {
 
                         }
-                        <li><p class="navbar-text">Olá, @User.Identity.GetUserName()</p></li>
+                        <li>
+                            <p class="navbar-text">
+                                Olá, @Html.ActionLink(User.Identity.GetUserName(), "MinhaConta", "Conta")
+                            </p>
+                        </li>
                         <li><a href="javascript:document.getElementById('Formulario_logoff').submit()">Logoff</a></li>
                     }
                     else
