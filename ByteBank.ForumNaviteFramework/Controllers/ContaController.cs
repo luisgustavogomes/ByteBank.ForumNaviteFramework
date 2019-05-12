@@ -98,7 +98,7 @@ namespace ByteBank.ForumNaviteFramework.Controllers
                 new AuthenticationProperties
                 {
                     RedirectUri = Url.Action("RegistrarPorAutenticacaoExternaCallback")
-                }, 
+                },
                 provider);
 
             return new HttpUnauthorizedResult();

@@ -1,0 +1,18 @@
+﻿@model ByteBank.ForumNaviteFramework.Models.ViewModels.UsuarioFuncaoViewModel
+
+@{
+    Layout = null;
+}
+
+@Html.HiddenFor(m => m.Id)
+@Html.HiddenFor(m => m.Nome)
+
+
+<tr>
+    <td>
+        @Html.EditorFor(m => m.Selecionado)
+    </td>
+    <td>
+        @Html.DisplayFor(m => m.Nome)
+    </td>
+</tr>

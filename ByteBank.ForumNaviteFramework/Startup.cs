@@ -28,6 +28,21 @@ namespace ByteBank.ForumNaviteFramework
                     return new UserStore<UsuarioAplicacao>(dbContext);
                 });
 
+
+            builder.CreatePerOwinContext<RoleStore<IdentityRole>>(
+                (opcoes, contextoOwin) =>
+                {
+                    var dbContext = contextoOwin.Get<DbContext>();
+                    return new RoleStore<IdentityRole>(dbContext);
+                });
+
+            builder.CreatePerOwinContext<RoleManager<IdentityRole>>(
+                (opcoes, contextoOwin) =>
+                {
+                    var roleStore = contextoOwin.Get<RoleStore<IdentityRole>>();
+                    return new RoleManager<IdentityRole>(roleStore);
+                });
+
             builder.CreatePerOwinContext<UserManager<UsuarioAplicacao>>(
                 (opcoes, contextoOwin) =>
                 {
@@ -95,6 +110,20 @@ namespace ByteBank.ForumNaviteFramework
             }
         }
 
+        private void CriarRoles(IdentityDbContext<UsuarioAplicacao> dbContext)
+        {
+            using (var roleStore = new RoleStore<IdentityRole>(dbContext))
+            using (var roleManager = new RoleManager<IdentityRole>(roleStore))
+            {
+                if (!roleManager.RoleExists(RolesNomes.ADMINISTRADOR))
+                    roleManager.Create(new IdentityRole(RolesNomes.ADMINISTRADOR));
+                if (!roleManager.RoleExists(RolesNomes.MODERADOR))
+                    roleManager.Create(new IdentityRole(RolesNomes.MODERADOR));
+            }
+
+
+        }
+
         private void CriarAdministrador(IdentityDbContext<UsuarioAplicacao> dbContext)
         {
             using (var userStore = new UserStore<UsuarioAplicacao>(dbContext))
@@ -109,29 +138,16 @@ namespace ByteBank.ForumNaviteFramework
                 administrador = new UsuarioAplicacao
                 {
                     Email = administradorEmail,
+                    NomeCompleto = ConfigurationManager.AppSettings["admin:user_name"],
                     UserName = ConfigurationManager.AppSettings["admin:user_name"],
                     EmailConfirmed = true
                 };
                 
-
                 userManager.Create(administrador, ConfigurationManager.AppSettings["admin:senha"]);
-
                 userManager.AddToRole(administrador.Id, RolesNomes.ADMINISTRADOR);
             }
         }
 
-        private void CriarRoles(IdentityDbContext<UsuarioAplicacao> dbContext)
-        {
-            using (var roleStore = new RoleStore<IdentityRole>(dbContext))
-            using (var roleManager = new RoleManager<IdentityRole>(roleStore))
-            {
-                if (!roleManager.RoleExists(RolesNomes.ADMINISTRADOR))
-                roleManager.Create(new IdentityRole(RolesNomes.ADMINISTRADOR));
-                if (!roleManager.RoleExists(RolesNomes.MODERADOR))
-                    roleManager.Create(new IdentityRole(RolesNomes.MODERADOR));
-            }
-
-            
-        }
+        
     }
 }

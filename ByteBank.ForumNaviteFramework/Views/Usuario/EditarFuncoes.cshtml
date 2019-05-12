@@ -1,0 +1,42 @@
+﻿@model ByteBank.ForumNaviteFramework.Models.ViewModels.UsuarioEditarFuncoesViewModel
+
+@{
+    ViewBag.Title = "EditarFuncoes";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Funções do usuário @Html.DisplayFor(m => m.NomeCompleto)</h2>
+<h5>@Html.DisplayFor(m => m.UserName)</h5>
+<h5>@Html.DisplayFor(m => m.Email)</h5>
+<hr />
+
+@using (Html.BeginForm("EditarFuncoes", "Usuario", FormMethod.Post))
+{
+    <div class="form-horizontal">
+        @Html.HiddenFor(m => m.Id)
+
+        <h4>Selecione as funções</h4>
+        <br /><hr />
+
+        <table>
+            <tr>
+                <th>Selecionado</th>
+                <th>Função</th>
+            </tr>
+
+
+            @Html.EditorFor(m => m.Funcoes)
+        </table>
+
+        <br /><hr />
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" name="Salvar" value="Salvar" class="btn btn-success" />
+            </div>
+        </div>
+
+    </div>
+}
+
+
+
