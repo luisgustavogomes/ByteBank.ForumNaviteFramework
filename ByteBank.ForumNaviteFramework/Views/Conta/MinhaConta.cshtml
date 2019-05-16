@@ -1,6 +1,8 @@
 ﻿@model ByteBank.ForumNaviteFramework.Models.ViewModels.ContaMinhaContaViewModel
 
 @{
+    /**/
+
     ViewBag.Title = "MinhaConta";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
@@ -9,35 +11,34 @@
 
 @using (Html.BeginForm())
 {
+    <div class="form-group">
+        @Html.ValidationSummary()
 
-    @Html.ValidationSummary()
+        @Html.LabelFor(modelo => modelo.NomeCompleto);
+        <br />
+        @Html.EditorFor(modelo => modelo.NomeCompleto)
+        <br />
 
-    @Html.LabelFor(modelo => modelo.NomeCompleto);
-    <br />
-    @Html.EditorFor(modelo => modelo.NomeCompleto)
-    <br />
+        @Html.LabelFor(modelo => modelo.NumeroDeCelular);
+        <br />
+        @Html.EditorFor(modelo => modelo.NumeroDeCelular)
+        <br />
 
-    @Html.LabelFor(modelo => modelo.NumeroDeCelular);
-    <br />
-    @Html.EditorFor(modelo => modelo.NumeroDeCelular)
-    <br />
 
-    if (Model.NumeroDeCelularConfirmado)
-    {
         @Html.LabelFor(modelo => modelo.HabilitarAutenticacaoDeDoisFatores);
         <br />
-        @Html.EditorFor(modelo => modelo.HabilitarAutenticacaoDeDoisFatores)
-        <br />
-    }
-    else
-    {
+        @*<br />*@
+
         <p>
+            @Html.EditorFor(modelo => modelo.HabilitarAutenticacaoDeDoisFatores)
             * Informe e confirme seu número de celular para habilitar
             a autenticação com 2 fatores!
         </p>
+        <br />
 
         @Html.ActionLink("Clique aqui para verificar o token recebido!", "VerificacaoCodigoCelular")
-    }
-
-    <input type="submit" value="Salvar" class="btn btn-default" />
+        <hr />
+        <input type="submit" value="Salvar" class="btn btn-success" />
+        <br />
+    </div>
 }

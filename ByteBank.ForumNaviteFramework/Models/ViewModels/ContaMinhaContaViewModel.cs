@@ -12,6 +12,7 @@ namespace ByteBank.ForumNaviteFramework.Models.ViewModels
         [Display(Name ="Nome Completo")]
         public string NomeCompleto { get; set; }
 
+        [Required]
         [Display(Name = "Número de celular")]
         public string NumeroDeCelular { get; set; }
 
