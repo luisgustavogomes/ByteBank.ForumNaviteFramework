@@ -9,39 +9,37 @@
 
 @using (Html.BeginForm())
 {
-    <div class="form-group">
-        @Html.ValidationSummary("", new { @class = "text-danger" })
 
-        @Html.LabelFor(m => m.NomeCompleto)
-        <br />
-        @Html.EditorFor(m => m.NomeCompleto)
-        <br />
+    @Html.ValidationSummary()
 
-        @Html.LabelFor(m => m.NumeroDeCelular)
-        <br />
-        @Html.EditorFor(m => m.NumeroDeCelular)
-        <br />
+    @Html.LabelFor(modelo => modelo.NomeCompleto);
+    <br />
+    @Html.EditorFor(modelo => modelo.NomeCompleto)
+    <br />
 
-        @if (Model.NumeroDeCelularConfirmado)
-        {
-            @Html.LabelFor(m => m.HabilitarAutenticacaoDeDoisFatores)
-            <br />
-            @Html.EditorFor(m => m.HabilitarAutenticacaoDeDoisFatores)
-            <br />
-        }
-        else
-        {
-            <p class="text-info">
-                * Informe e confirme seu número de celular para habilitar a autenticação com 2 fatores!
-            </p>
+    @Html.LabelFor(modelo => modelo.NumeroDeCelular);
+    <br />
+    @Html.EditorFor(modelo => modelo.NumeroDeCelular)
+    <br />
 
-            @Html.ActionLink("Clique aqui para verificar o token recebido", "VerificacaoCodigoCelular", "Conta")
-        }
+    if (Model.NumeroDeCelularConfirmado)
+    {
+        @Html.LabelFor(modelo => modelo.HabilitarAutenticacaoDeDoisFatores);
+        <br />
+        @Html.EditorFor(modelo => modelo.HabilitarAutenticacaoDeDoisFatores)
+        <br />
+    }
+    else
+    {
+        <p>
+            * Informe e confirme seu número de celular para habilitar
+            a autenticação com 2 fatores!
+        </p>
 
-        <br />
-        <input type="submit" name="Salvar" value="Salvar" class="btn btn-success" />
-        <br />
-    </div>
+        @Html.ActionLink("Clique aqui para verificar o token recebido!", "VerificacaoCodigoCelular")
+    }
+
+    <input type="submit" value="Salvar" class="btn btn-default" />
 
 
 
