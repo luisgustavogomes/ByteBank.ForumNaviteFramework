@@ -16,12 +16,14 @@ namespace ByteBank.ForumNaviteFramework.App_Start.Identity
         public bool ObrigatorioUpperCase { get; set; }
         public bool ObrigatorioDigitos { get; set; }
 
+#pragma warning disable CS1998 // Este método assíncrono não possui operadores 'await' e será executado de modo síncrono. É recomendável o uso do operador 'await' para aguardar chamadas à API desbloqueadas ou do operador 'await Task.Run(...)' para realizar um trabalho associado à CPU em um thread em segundo plano.
         /// <summary>
         /// Cria um IdentityResult àpartir de uma senha.
         /// </summary>
         /// <param name="item"></param>
         /// <returns></returns>
         public async Task<IdentityResult> ValidateAsync(string item)
+#pragma warning restore CS1998 // Este método assíncrono não possui operadores 'await' e será executado de modo síncrono. É recomendável o uso do operador 'await' para aguardar chamadas à API desbloqueadas ou do operador 'await Task.Run(...)' para realizar um trabalho associado à CPU em um thread em segundo plano.
         {
             var erros = new List<string>();
 
