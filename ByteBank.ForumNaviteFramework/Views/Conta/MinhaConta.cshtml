@@ -1,7 +1,6 @@
 ﻿@model ByteBank.ForumNaviteFramework.Models.ViewModels.ContaMinhaContaViewModel
 
 @{
-    /**/
 
     ViewBag.Title = "MinhaConta";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -24,10 +23,8 @@
         @Html.EditorFor(modelo => modelo.NumeroDeCelular)
         <br />
 
-
         @Html.LabelFor(modelo => modelo.HabilitarAutenticacaoDeDoisFatores);
         <br />
-        @*<br />*@
 
         <p>
             @Html.EditorFor(modelo => modelo.HabilitarAutenticacaoDeDoisFatores)
@@ -36,7 +33,7 @@
         </p>
         <br />
 
-        @Html.ActionLink("Clique aqui para verificar o token recebido!", "VerificacaoCodigoCelular")
+        @Html.ActionLink("Clique aqui para verificar o token recebido!", "VerificacaoCodigoCelular", "Conta")
         <hr />
         <input type="submit" value="Salvar" class="btn btn-success" />
         <br />

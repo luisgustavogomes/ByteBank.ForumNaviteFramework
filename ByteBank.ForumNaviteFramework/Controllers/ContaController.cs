@@ -53,17 +53,13 @@ namespace ByteBank.ForumNaviteFramework.Controllers
             }
         }
 
-        public ActionResult Registrar()
-        {
-            return View();
-        }
+        public ActionResult Registrar() => View();
 
         [HttpPost]
         public async Task<ActionResult> Registrar(ContaRegistrarViewModel model)
         {
             if (ModelState.IsValid)
             {
-
                 var novoUsuario = new UsuarioAplicacao
                 {
                     Email = model.Email,
@@ -163,11 +159,7 @@ namespace ByteBank.ForumNaviteFramework.Controllers
                 ModelState.AddModelError("", item);
         }
 
-        public async Task<ActionResult> Login()
-
-        {
-            return View();
-        }
+        public async Task<ActionResult> Login() => View();
 
         [HttpPost]
         public async Task<ActionResult> Login(ContaLoginViewModel model)
@@ -204,6 +196,8 @@ namespace ByteBank.ForumNaviteFramework.Controllers
                         else
                             return SenhaOuUsuarioInvalidos();
                         break;
+                    case SignInStatus.RequiresVerification:
+                        return RedirectToAction("VerificacaoDoisFatores", "Conta");
                     default:
                         return SenhaOuUsuarioInvalidos();
                 }
@@ -249,10 +243,7 @@ namespace ByteBank.ForumNaviteFramework.Controllers
         }
 
 
-        public ActionResult EsqueciSenha()
-        {
-            return View();
-        }
+        public ActionResult EsqueciSenha() => View();
 
 
         [HttpPost]
@@ -330,6 +321,8 @@ namespace ByteBank.ForumNaviteFramework.Controllers
 
                 if (!usuario.PhoneNumberConfirmed)
                     await EnviaSmsDeConfirmacaoAsync(usuario);
+                else
+                    usuario.TwoFactorEnabled = model.HabilitarAutenticacaoDeDoisFatores;
 
                 var resultadoUpdate = await UserManager.UpdateAsync(usuario);
 
@@ -347,10 +340,7 @@ namespace ByteBank.ForumNaviteFramework.Controllers
             await UserManager.SendSmsAsync(usuario.Id, $"Token de confirmação: {token}");
         }
 
-        public ActionResult VerificacaoCodigoCelular()
-        {
-            return View();
-        }
+        public ActionResult VerificacaoCodigoCelular() => View();
 
         [HttpPost]
         public async Task<ActionResult> VerificacaoCodigoCelular(string token)
@@ -364,6 +354,24 @@ namespace ByteBank.ForumNaviteFramework.Controllers
             AdicicionaErros(resultado);
             return View();
         }
+
+        public async Task<ActionResult> VerificacaoDoisFatores()
+        {
+            var resultado = await SignInManager.SendTwoFactorCodeAsync("SMS");
+            if (resultado)
+                return View();
+            return View("Error");
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> VerificacaoDoisFatores(string token)
+        {
+            var resultado = await SignInManager.TwoFactorSignInAsync("SMS",token, isPersistent: false, rememberBrowser: false);
+            if (resultado == SignInStatus.Success)
+                return RedirectToAction("Index", "Home");
+            return View("Error");
+        }
+
     }
 
 }

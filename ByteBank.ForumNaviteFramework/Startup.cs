@@ -67,6 +67,12 @@ namespace ByteBank.ForumNaviteFramework
 
                     userManager.EmailService = new EmailServico();
                     userManager.SmsService = new SmsServico();
+
+                    userManager.RegisterTwoFactorProvider("SMS",new PhoneNumberTokenProvider<UsuarioAplicacao>
+                    {
+                        MessageFormat = "Codigo de autenticação: {0}"
+                    });
+
                     var dataProtectionProvider = opcoes.DataProtectionProvider;
                     var dataProtectionProviderCreated = opcoes.DataProtectionProvider.Create("ByteBank.ForumNaviteFramework");
 
@@ -96,6 +102,7 @@ namespace ByteBank.ForumNaviteFramework
             });
 
             builder.UseExternalSignInCookie(DefaultAuthenticationTypes.ExternalCookie);
+            builder.UseTwoFactorSignInCookie(DefaultAuthenticationTypes.TwoFactorCookie,TimeSpan.FromMinutes(5));
 
             builder.UseGoogleAuthentication(new GoogleOAuth2AuthenticationOptions
             {
