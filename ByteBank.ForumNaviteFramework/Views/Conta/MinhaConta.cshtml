@@ -8,6 +8,8 @@
 
 <h2>Minha conta</h2>
 
+@using (Html.BeginForm("EsquecerNavegador", "Conta", FormMethod.Post, new { id = "formulario_esquecer_nagevador" })) { }
+
 @using (Html.BeginForm())
 {
     <div class="form-group">
@@ -31,11 +33,16 @@
             * Informe e confirme seu número de celular para habilitar
             a autenticação com 2 fatores!
         </p>
+
         <br />
 
         @Html.ActionLink("Clique aqui para verificar o token recebido!", "VerificacaoCodigoCelular", "Conta")
         <hr />
         <input type="submit" value="Salvar" class="btn btn-success" />
         <br />
+
+        <a href="javascript:document.getElementById('formulario_esquecer_nagevador').submit()">Esquecer esse navegador</a>
+
     </div>
 }
+

@@ -1,4 +1,5 @@
-﻿
+﻿@model ByteBank.ForumNaviteFramework.Models.ViewModels.ContaVerificacaoDoisFatoresViewModel
+
 @{
     ViewBag.Title = "VerificacaoDoisFatores";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -9,9 +10,9 @@
 @using (Html.BeginForm())
 {
     <div class="form-group">
+        @Html.ValidationSummary("", new { @class = "text-danger" })
 
-        <label>Token de SMS:</label>
-        <input type="text" name="token" />
+        @Html.EditorForModel()
 
         <hr />
         <br />

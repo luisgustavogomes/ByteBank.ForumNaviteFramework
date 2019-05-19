@@ -364,12 +364,22 @@ namespace ByteBank.ForumNaviteFramework.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> VerificacaoDoisFatores(string token)
+        public async Task<ActionResult> VerificacaoDoisFatores(ContaVerificacaoDoisFatoresViewModel model)
         {
-            var resultado = await SignInManager.TwoFactorSignInAsync("SMS",token, isPersistent: false, rememberBrowser: false);
+            var resultado = await SignInManager.TwoFactorSignInAsync("SMS", 
+                                                                     model.Token, 
+                                                                     isPersistent: model.ContinuarLogado, 
+                                                                     rememberBrowser: model.LembrarDesteComputador);
             if (resultado == SignInStatus.Success)
                 return RedirectToAction("Index", "Home");
             return View("Error");
+        }
+
+        [HttpPost]
+        public ActionResult EsquecerNavegador()
+        {
+            AuthenticationManager.SignOut(DefaultAuthenticationTypes.TwoFactorRememberBrowserCookie);
+            return RedirectToAction("Index", "Home");
         }
 
     }

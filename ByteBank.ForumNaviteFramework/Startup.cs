@@ -103,6 +103,7 @@ namespace ByteBank.ForumNaviteFramework
 
             builder.UseExternalSignInCookie(DefaultAuthenticationTypes.ExternalCookie);
             builder.UseTwoFactorSignInCookie(DefaultAuthenticationTypes.TwoFactorCookie,TimeSpan.FromMinutes(5));
+            builder.UseTwoFactorRememberBrowserCookie(DefaultAuthenticationTypes.TwoFactorRememberBrowserCookie);
 
             builder.UseGoogleAuthentication(new GoogleOAuth2AuthenticationOptions
             {
