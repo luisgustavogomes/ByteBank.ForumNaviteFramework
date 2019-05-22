@@ -9,8 +9,7 @@
 
 @using (Html.BeginForm())
 {
-    <div class="form-group">
-        @Html.ValidationSummary("", new { @class = "text-danger" })
+        @Html.ValidationSummary()
 
         @Html.EditorForModel()
 
@@ -18,5 +17,4 @@
         <br />
         <input type="submit" name="Enviar" value="Enviar" class="btn btn-success" />
         <br />
-    </div>
 }

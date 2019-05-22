@@ -68,7 +68,7 @@ namespace ByteBank.ForumNaviteFramework
                     userManager.EmailService = new EmailServico();
                     userManager.SmsService = new SmsServico();
 
-                    userManager.RegisterTwoFactorProvider("SMS",new PhoneNumberTokenProvider<UsuarioAplicacao>
+                    userManager.RegisterTwoFactorProvider("SMS", new PhoneNumberTokenProvider<UsuarioAplicacao>
                     {
                         MessageFormat = "Codigo de autenticação: {0}"
                     });
@@ -82,7 +82,7 @@ namespace ByteBank.ForumNaviteFramework
                     userManager.DefaultAccountLockoutTimeSpan = TimeSpan.FromMinutes(2);
                     userManager.UserLockoutEnabledByDefault = true;
 
-                    
+
 
                     return userManager;
                 });
@@ -90,7 +90,7 @@ namespace ByteBank.ForumNaviteFramework
             builder.CreatePerOwinContext<SignInManager<UsuarioAplicacao, string>>(
                 (opcoes, contextoOwin) =>
                 {
-                    
+
                     var userManager = contextoOwin.Get<UserManager<UsuarioAplicacao>>();
                     var signInManager = new SignInManager<UsuarioAplicacao, string>(userManager, contextoOwin.Authentication);
                     return signInManager;
@@ -98,11 +98,19 @@ namespace ByteBank.ForumNaviteFramework
 
             builder.UseCookieAuthentication(new CookieAuthenticationOptions
             {
-                AuthenticationType = DefaultAuthenticationTypes.ApplicationCookie
+                AuthenticationType = DefaultAuthenticationTypes.ApplicationCookie,
+                Provider = new CookieAuthenticationProvider
+                {
+                    OnValidateIdentity = SecurityStampValidator
+                        .OnValidateIdentity<UserManager<UsuarioAplicacao>, UsuarioAplicacao>
+                        (TimeSpan.FromSeconds(0),
+                            (manager, usuario) =>
+                            manager.CreateIdentityAsync(usuario, DefaultAuthenticationTypes.ApplicationCookie))
+                }
             });
 
             builder.UseExternalSignInCookie(DefaultAuthenticationTypes.ExternalCookie);
-            builder.UseTwoFactorSignInCookie(DefaultAuthenticationTypes.TwoFactorCookie,TimeSpan.FromMinutes(5));
+            builder.UseTwoFactorSignInCookie(DefaultAuthenticationTypes.TwoFactorCookie, TimeSpan.FromMinutes(5));
             builder.UseTwoFactorRememberBrowserCookie(DefaultAuthenticationTypes.TwoFactorRememberBrowserCookie);
 
             builder.UseGoogleAuthentication(new GoogleOAuth2AuthenticationOptions
@@ -151,12 +159,12 @@ namespace ByteBank.ForumNaviteFramework
                     UserName = ConfigurationManager.AppSettings["admin:user_name"],
                     EmailConfirmed = true
                 };
-                
+
                 userManager.Create(administrador, ConfigurationManager.AppSettings["admin:senha"]);
                 userManager.AddToRole(administrador.Id, RolesNomes.ADMINISTRADOR);
             }
         }
 
-        
+
     }
 }

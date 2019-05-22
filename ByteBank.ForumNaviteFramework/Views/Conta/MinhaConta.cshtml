@@ -8,41 +8,96 @@
 
 <h2>Minha conta</h2>
 
-@using (Html.BeginForm("EsquecerNavegador", "Conta", FormMethod.Post, new { id = "formulario_esquecer_nagevador" })) { }
+@using (Html.BeginForm("EsquecerNavegador", "Conta", FormMethod.Post, new { id = "formulario_esquecer_navegador" })) { }
+
+@using (Html.BeginForm("DeslogarDeTodosOsLocais", "Conta", FormMethod.Post, new { id = "formulario_deslogar_de_todos_os_locais" })) { }
 
 @using (Html.BeginForm())
 {
-    <div class="form-group">
-        @Html.ValidationSummary()
+    @*<div class="form-group">
+            @Html.ValidationSummary()
 
-        @Html.LabelFor(modelo => modelo.NomeCompleto);
-        <br />
-        @Html.EditorFor(modelo => modelo.NomeCompleto)
-        <br />
+            @Html.LabelFor(modelo => modelo.NomeCompleto);
+            <br />
+            @Html.EditorFor(modelo => modelo.NomeCompleto)
+            <br />
 
-        @Html.LabelFor(modelo => modelo.NumeroDeCelular);
-        <br />
-        @Html.EditorFor(modelo => modelo.NumeroDeCelular)
-        <br />
+            @Html.LabelFor(modelo => modelo.NumeroDeCelular);
+            <br />
+            @Html.EditorFor(modelo => modelo.NumeroDeCelular)
+            <br />
 
-        @Html.LabelFor(modelo => modelo.HabilitarAutenticacaoDeDoisFatores);
-        <br />
+            @Html.LabelFor(modelo => modelo.HabilitarAutenticacaoDeDoisFatores);
+            <br />
 
-        <p>
+            <p>
+                @Html.EditorFor(modelo => modelo.HabilitarAutenticacaoDeDoisFatores)
+                * Informe e confirme seu número de celular para habilitar
+                a autenticação com 2 fatores!
+            </p>
+
+            <br />
+
+            @Html.ActionLink("Clique aqui para verificar o token recebido!", "VerificacaoCodigoCelular", "Conta")
+            <hr />
+            <input type="submit" value="Salvar" class="btn btn-success" />
+            <br />
+
+            <a href="javascript:document.getElementById('formulario_esquecer_nagevador').submit()">Esquecer esse navegador</a>
+            <br />
+            <a href="javascript:document.getElementById('formulario_deslogar_de_todos_os_locais').submit()">Deslogar de todos os locais</a>
+
+        </div>*@
+
+
+    @Html.ValidationSummary()
+
+    @Html.LabelFor(modelo => modelo.NomeCompleto);
+    <br />
+    @Html.EditorFor(modelo => modelo.NomeCompleto)
+    <br />
+
+    @Html.LabelFor(modelo => modelo.NumeroDeCelular);
+    <br />
+    @Html.EditorFor(modelo => modelo.NumeroDeCelular)
+    <br />
+
+    try
+    {
+
+
+
+        if (Model.NumeroDeCelularConfirmado)
+        {
+            @Html.LabelFor(modelo => modelo.HabilitarAutenticacaoDeDoisFatores);
+            <br />
             @Html.EditorFor(modelo => modelo.HabilitarAutenticacaoDeDoisFatores)
-            * Informe e confirme seu número de celular para habilitar
-            a autenticação com 2 fatores!
-        </p>
+            <br />
 
-        <br />
+            <a href="javascript:document.getElementById('formulario_esquecer_navegador').submit()">
+                Esquecer este navegador
+            </a>
 
-        @Html.ActionLink("Clique aqui para verificar o token recebido!", "VerificacaoCodigoCelular", "Conta")
-        <hr />
-        <input type="submit" value="Salvar" class="btn btn-success" />
-        <br />
+        }
+        else
+        {
+            <p>
+                * Informe e confirme seu número de celular para habilitar
+                a autenticação com 2 fatores!
+            </p>
 
-        <a href="javascript:document.getElementById('formulario_esquecer_nagevador').submit()">Esquecer esse navegador</a>
+            @Html.ActionLink("Clique aqui para verificar o token recebido!", "VerificacaoCodigoCelular")
+        }
+    }
+<br />
 
-    </div>
+<a href="javascript:document.getElementById('formulario_deslogar_de_todos_os_locais').submit()">
+    Deslogar de todos os locais!
+</a>
+
+<br />
+
+<input type="submit" value="Salvar" class="btn btn-success" />
 }
+/**/
 

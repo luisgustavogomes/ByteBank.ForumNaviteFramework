@@ -100,7 +100,6 @@ namespace ByteBank.ForumNaviteFramework.Controllers
             return new HttpUnauthorizedResult();
         }
 
-
         public async Task<ActionResult> RegistrarPorAutenticacaoExternaCallback()
         {
             var loginInfo = await SignInManager.AuthenticationManager.GetExternalLoginInfoAsync();
@@ -127,8 +126,6 @@ namespace ByteBank.ForumNaviteFramework.Controllers
 
             return View("Error");
         }
-
-
 
         public async Task<ActionResult> ConfirmacaoEmail(string usuarioId, string token)
         {
@@ -205,7 +202,6 @@ namespace ByteBank.ForumNaviteFramework.Controllers
             return View(model);
         }
 
-
         [HttpPost]
         public ActionResult LoginPorAutenticacaoExterna(string provider)
         {
@@ -217,7 +213,6 @@ namespace ByteBank.ForumNaviteFramework.Controllers
                 provider);
             return new HttpUnauthorizedResult();
         }
-
 
         public async Task<ActionResult> LoginPorAutenticacaoExternaCallback()
         {
@@ -242,9 +237,7 @@ namespace ByteBank.ForumNaviteFramework.Controllers
             return RedirectToAction("Index", "home");
         }
 
-
         public ActionResult EsqueciSenha() => View();
-
 
         [HttpPost]
         public async Task<ActionResult> EsqueciSenha(ContaEsqueciSenhaViewModel model)
@@ -308,7 +301,6 @@ namespace ByteBank.ForumNaviteFramework.Controllers
 
             return View(modelo);
         }
-
 
         [HttpPost]
         public async Task<ActionResult> MinhaConta(ContaMinhaContaViewModel model)
@@ -379,6 +371,15 @@ namespace ByteBank.ForumNaviteFramework.Controllers
         public ActionResult EsquecerNavegador()
         {
             AuthenticationManager.SignOut(DefaultAuthenticationTypes.TwoFactorRememberBrowserCookie);
+            return RedirectToAction("Index", "Home");
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> DeslogarDeTodosOsLocais()
+        {
+            var usuarioId = HttpContext.User.Identity.GetUserId();
+            await UserManager.UpdateSecurityStampAsync(usuarioId);
+
             return RedirectToAction("Index", "Home");
         }
 
